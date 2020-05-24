@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Heart</title>
+
+    <style>
+      body {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        background-color: pink;
+        overflow: hidden;
+      }
+      #app {
+        height: 100%;
+        width: 100%;
+      }
+      .container {
+        width: 500px;
+        height: 500px;
+        margin: 50px auto;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      svg {
+        height: 500px;
+        width: 800px;
+      }
+      #heart {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: beat 1s ease infinite alternate;
+      }
+
+      @keyframes beat {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.5);
+        }
+      }
+
+      #app .star {
+        /* 使用伪元素制作尾巴,此处可以写流星头部的形状 */
+        /* 我觉得头部不带形状才好看,所以不写 */
+        width: 0;
+        height: 0;
+        position: relative;
+        opacity: 0;
+        animation: star-fall 3s linear infinite;
+        z-index: -1;
+      }
+      .star::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        /* 这里用边框写了个长三角形作为流星的尾巴 */
+        border: 3px solid transparent;
+        border-left-width: 200px;
+        border-left-color: rgba(255, 255, 255, 0.7);
+        /* 变形,旋转-45° 拉伸 */
+        transform: rotate(-45deg) translate3d(1px, 3px, 0);
+        /* 设置原点 */
+        transform-origin: 0% 100%;
+      }
+
+      /* 流星滑落动画 */
+      @keyframes star-fall {
+        0% {
+          opacity: 0;
+          transform: scale(0.5) translate3d(0, 0, 0);
+          /* 兼容一些浏览器 */
+          -webkit-transform: scale(0.5) translate3d(0, 0, 0);
+          -moz-transform: scale(0.5) translate3d(0, 0, 0);
+        }
+        50% {
+          opacity: 1;
+          transform: translate3d(-200px, 200px, 0);
+          -webkit-transform: translate3d(-200px, 200px, 0);
+          -moz-transform: translate3d(-200px, 200px, 0);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.2) translate3d(-300px, 300px, 0);
+          -webkit-transform: scale(1.2) translate3d(-300px, 300px, 0);
+          -moz-transform: scale(1.2) translate3d(-300px, 300px, 0);
+        }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  </head>
+  <body>
+    <div id="app">
+      <ul>
+        <li
+          class="star"
+          v-for="item in starCount"
+          :key="item.id"
+          :style="{top:item.top+'px',left:item.left+'px',animationDelay:item.delay+'s'}"
+          style="list-style: none;"
+        ></li>
+      </ul>
+      <div class="container">
+        <svg viewBox="0 0 100 100">
+          <g id="heart" style="cursor: pointer;" @click="showMsg()">
+            <circle cx="40" cy="50" r="10" fill="red" stroke="red"></circle>
+            <circle cx="60" cy="50" r="10" fill="red" stroke="red"></circle>
+            <polygon
+              points="32.85,57 50,50 67.15,57 50,75"
+              fill="red"
+              stroke="red"
+            ></polygon>
+          </g>
+          <text
+            x="13"
+            y="95"
+            style="font-size: 10;"
+            fill="#1874CD"
+            stroke="white"
+            stroke-width="0.4"
+            v-show="msgFlag"
+          >
+            I love you, Jayce.
+          </text>
+        </svg>
+      </div>
+    </div>
+    <script>
+      var vm = new Vue({
+        el: "#app",
+        data: {
+          starCount: [], //定义数组存储星星的一些属性以及个数
+          msgFlag: false,
+        },
+        methods: {
+          setStarCount() {
+            //生成星星的方法
+            for (let i = 0; i < 30; i++) {
+              // i < 星星个数
+              let star = {}; //定义存储一个星星的对象
+              let top = parseInt(Math.random() * 1000); //定义星星的top值
+              let left = parseInt(Math.random() * 1500); //定义星星的left值
+              let delay = parseInt(Math.random() * 10); //定义星星的动画延迟时间
+              star.id = i;
+              star.top = top;
+              star.left = left;
+              star.delay = delay;
+              this.starCount.push(star);
+            }
+          },
+
+          showMsg() {
+            this.msgFlag = !this.msgFlag;
+          },
+        },
+        created() {
+          //Vue实例的生命周期函数
+          this.setStarCount();
+        },
+      });
+    </script>
+  </body>
+</html>
